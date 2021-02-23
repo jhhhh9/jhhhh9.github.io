@@ -2,6 +2,27 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.gtxhjh.cn/2021/02/23/JVM-3-6/</loc>
+    
+    <lastmod>2021-02-23</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.gtxhjh.cn/2021/02/23/JVM-3-5/</loc>
+    
+    <lastmod>2021-02-23</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://www.gtxhjh.cn/2021/02/23/JVM-3-4/</loc>
+    
+    <lastmod>2021-02-23</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.gtxhjh.cn/2021/02/19/volatile%E4%B8%8E%E4%BC%AA%E5%85%B1%E4%BA%AB%E7%9A%84%E7%90%86%E8%A7%A3/</loc>
     
     <lastmod>2021-02-19</lastmod>
@@ -229,6 +250,20 @@
   
   <url>
     <loc>https://www.gtxhjh.cn/tags/%E8%99%9A%E6%8B%9F%E6%9C%BA%E6%A0%88/</loc>
+    <lastmod>2021-02-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.gtxhjh.cn/tags/%E5%A0%86/</loc>
+    <lastmod>2021-02-23</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.gtxhjh.cn/tags/%E6%96%B9%E6%B3%95%E5%8C%BA/</loc>
     <lastmod>2021-02-23</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
