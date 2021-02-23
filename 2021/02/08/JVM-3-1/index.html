@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width,initial-scale=1"><title>第三章_1-程序计数器(PC寄存器) | 阿花花花deCSNotes</title><meta name="keywords" content="jvm,运行时数据区,程序计数器"><meta name="author" content="JH"><meta name="copyright" content="JH"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="第三章-1：程序计数器(PC寄存器)PC寄存器介绍 官方文档网址：https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jvms&#x2F;se8&#x2F;html&#x2F;index.html     JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有把数据装载到寄存器才能够运行。  这里，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="第三章_1-程序计数器(PC寄存器)">
+<meta property="og:url" content="https://www.gtxhjh.cn/2021/02/08/JVM-3-1/index.html">
+<meta property="og:site_name" content="阿花花花deCSNotes">
+<meta property="og:description" content="第三章-1：程序计数器(PC寄存器)PC寄存器介绍 官方文档网址：https:&#x2F;&#x2F;docs.oracle.com&#x2F;javase&#x2F;specs&#x2F;jvms&#x2F;se8&#x2F;html&#x2F;index.html     JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，寄存器存储指令相关的现场信息。CPU只有把数据装载到寄存器才能够运行。  这里，">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg">
+<meta property="article:published_time" content="2021-02-08T15:52:54.000Z">
+<meta property="article:modified_time" content="2021-02-08T15:58:44.786Z">
+<meta property="article:author" content="JH">
+<meta property="article:tag" content="jvm">
+<meta property="article:tag" content="运行时数据区">
+<meta property="article:tag" content="程序计数器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg"><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://www.gtxhjh.cn/2021/02/08/JVM-3-1/"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free/css/all.min.css" media="print" onload="this.media='all'"><script>const GLOBAL_CONFIG = { 
+  root: '/',
+  algolia: undefined,
+  localSearch: undefined,
+  translate: undefined,
+  noticeOutdate: undefined,
+  highlight: {"plugin":"highlighjs","highlightCopy":true,"highlightLang":true},
+  copy: {
+    success: '复制成功',
+    error: '复制错误',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  date_suffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'fancybox',
+  Snackbar: undefined,
+  source: {
+    jQuery: 'https://cdn.jsdelivr.net/npm/jquery@latest/dist/jquery.min.js',
+    justifiedGallery: {
+      js: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/js/jquery.justifiedGallery.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/justifiedGallery/dist/css/justifiedGallery.min.css'
+    },
+    fancybox: {
+      js: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.js',
+      css: 'https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@latest/dist/jquery.fancybox.min.css'
+    }
+  },
+  isPhotoFigcaption: false,
+  islazyload: false,
+  isanchor: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = { 
+  isPost: true,
+  isHome: false,
+  isHighlightShrink: false,
+  isToc: true,
+  postUpdate: '2021-02-08 23:58:44'
+}</script><noscript><style type="text/css">
+  #nav {
+    opacity: 1
+  }
+  .justified-gallery img {
+    opacity: 1
+  }
+
+  #recent-posts time,
+  #post-meta time {
+    display: inline !important
+  }
+</style></noscript><script>(win=>{
+    win.saveToLocal = {
+      set: function setWithExpiry(key, value, ttl) {
+        if (ttl === 0) return
+        const now = new Date()
+        const expiryDay = ttl * 86400000
+        const item = {
+          value: value,
+          expiry: now.getTime() + expiryDay,
+        }
+        localStorage.setItem(key, JSON.stringify(item))
+      },
+
+      get: function getWithExpiry(key) {
+        const itemStr = localStorage.getItem(key)
+
+        if (!itemStr) {
+          return undefined
+        }
+        const item = JSON.parse(itemStr)
+        const now = new Date()
+
+        if (now.getTime() > item.expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return item.value
+      }
+    }
+  
+    win.getScript = url => new Promise((resolve, reject) => {
+      const script = document.createElement('script')
+      script.src = url
+      script.async = true
+      script.onerror = reject
+      script.onload = script.onreadystatechange = function() {
+        const loadState = this.readyState
+        if (loadState && loadState !== 'loaded' && loadState !== 'complete') return
+        script.onload = script.onreadystatechange = null
+        resolve()
+      }
+      document.head.appendChild(script)
+    })
+  
+      win.activateDarkMode = function () {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      win.activateLightMode = function () {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
+      const t = saveToLocal.get('theme')
+    
+          if (t === 'dark') activateDarkMode()
+          else if (t === 'light') activateLightMode()
+        
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        if (asideStatus === 'hide') {
+          document.documentElement.classList.add('hide-aside')
+        } else {
+          document.documentElement.classList.remove('hide-aside')
+        }
+      }
+    })(window)</script><meta name="generator" content="Hexo 5.3.0"><link rel="alternate" href="/atom.xml" title="阿花花花deCSNotes" type="application/atom+xml">
+</head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="author-avatar"><img class="avatar-img" src="/img/avatar.png" onerror="onerror=null;src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data"><div class="data-item is-center"><div class="data-item-link"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a></div></div><div class="data-item is-center"><div class="data-item-link"><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div></div></div><hr/><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url('https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg')"><nav id="nav"><span id="blog_name"><a id="site-name" href="/">阿花花花deCSNotes</a></span><div id="menus"><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> Home</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> Archives</span></a></div></div><div id="toggle-menu"><a class="site-page"><i class="fas fa-bars fa-fw"></i></a></div></div></nav><div id="post-info"><h1 class="post-title">第三章_1-程序计数器(PC寄存器)</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2021-02-08T15:52:54.000Z" title="发表于 2021-02-08 23:52:54">2021-02-08</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2021-02-08T15:58:44.786Z" title="更新于 2021-02-08 23:58:44">2021-02-08</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/jvm/">jvm</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv"><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">阅读量:</span><span id="busuanzi_value_page_pv"></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="post-content" id="article-container"><h1 id="第三章-1：程序计数器-PC寄存器"><a href="#第三章-1：程序计数器-PC寄存器" class="headerlink" title="第三章-1：程序计数器(PC寄存器)"></a>第三章-1：程序计数器(PC寄存器)</h1><h2 id="PC寄存器介绍"><a href="#PC寄存器介绍" class="headerlink" title="PC寄存器介绍"></a>PC寄存器介绍</h2><blockquote>
+<p>官方文档网址：<a target="_blank" rel="noopener" href="https://docs.oracle.com/javase/specs/jvms/se8/html/index.html">https://docs.oracle.com/javase/specs/jvms/se8/html/index.html</a></p>
+</blockquote>
+<p><img src="/2021/02/08/JVM-3-1/image-20210205205040315.png" alt="image-20210205205040315"></p>
+<ol>
+<li> JVM中的程序计数寄存器（Program Counter Register）中，Register的命名源于CPU的寄存器，<strong>寄存器存储指令相关的现场信息</strong>。CPU只有把数据装载到寄存器才能够运行。</li>
+<li> 这里，并非是广义上所指的物理寄存器，或许将其翻译为PC计数器（或指令计数器）会更加贴切（也称为程序钩子（钩代码，行号指示器）），并且也不容易引起一些不必要的误会。<strong>JVM中的PC寄存器是对物理PC寄存器的一种抽象模拟</strong>。</li>
+<li> 它是一块很小的内存空间，几乎可以忽略不记。也是运行速度最快的存储区域。</li>
+<li> 在JVM规范中，<strong>每个线程都有它自己的程序计数器，是线程私有的，生命周期与线程的生命周期保持一致</strong>。</li>
+<li> 任何时间一个线程都只有一个方法在执行，也就是所谓的<strong>当前方法</strong>。<strong>程序计数器会存储当前线程正在执行的Java方法的JVM指令地址</strong>；或者，如果是在执行native方法，则是未指定值（undefned）。</li>
+<li> 它是<strong>程序控制流</strong>的指示器，分支、循环、跳转、异常处理、线程恢复等基础功能都需要依赖这个计数器来完成。</li>
+<li> 字节码解释器工作时就是通过改变这个计数器的值来选取下一条需要执行的字节码指令。</li>
+<li> 它是<strong>唯一一个</strong>在Java虚拟机规范中没有规定任何OutofMemoryError情况的区域（无垃圾回收和OOM异常）</li>
+</ol>
+<h2 id="PC寄存器的作用"><a href="#PC寄存器的作用" class="headerlink" title="PC寄存器的作用"></a>PC寄存器的作用</h2><p>PC寄存器用来存储指向<strong>下一条指令的地址</strong>，也即将要执行的指令代码。由执行引擎读取下一条指令，并执行该指令。</p>
+<p><img src="/2021/02/08/JVM-3-1/image-20210205205251917.png" alt="image-20210205205251917"></p>
+<h2 id="举例"><a href="#举例" class="headerlink" title="举例"></a>举例</h2><figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">PCRegisterTest</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">10</span>;</span><br><span class="line">        <span class="keyword">int</span> j = <span class="number">20</span>;</span><br><span class="line">        <span class="keyword">int</span> k = i + j;</span><br><span class="line"></span><br><span class="line">        String s = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line">        System.out.println(i);</span><br><span class="line">        System.out.println(k);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>查看字节码</p>
+<blockquote>
+<p>看字节码的方法：<a target="_blank" rel="noopener" href="https://blog.csdn.net/21aspnet/article/details/88351875">https://blog.csdn.net/21aspnet/article/details/88351875</a></p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Classfile /F:/IDEAWorkSpaceSourceCode/JVMDemo/out/production/chapter04/com/atguigu/java/PCRegisterTest.class</span><br><span class="line">  Last modified <span class="number">2020</span>-<span class="number">11</span>-<span class="number">2</span>; size <span class="number">675</span> bytes</span><br><span class="line">  MD5 checksum 53b3ef104479ec9e9b7ce5319e5881d3</span><br><span class="line">  Compiled from <span class="string">&quot;PCRegisterTest.java&quot;</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">com</span>.<span class="title">atguigu</span>.<span class="title">java</span>.<span class="title">PCRegisterTest</span></span></span><br><span class="line">  minor version: 0</span><br><span class="line">  major version: <span class="number">52</span></span><br><span class="line">  flags: ACC_PUBLIC, ACC_SUPER</span><br><span class="line">Constant pool:</span><br><span class="line">   #1 = Methodref          #6.#26         // java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">   #2 = String             #27            // abc</span><br><span class="line">   #3 = Fieldref           #28.#29        // java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">   #4 = Methodref          #30.#31        // java/io/PrintStream.println:(I)V</span><br><span class="line">   #5 = Class              #32            // com/atguigu/java/PCRegisterTest</span><br><span class="line">   #6 = Class              #33            // java/lang/Object</span><br><span class="line">   #7 = Utf8               &lt;init&gt;</span><br><span class="line">   #8 = Utf8               ()V</span><br><span class="line">   #9 = Utf8               Code</span><br><span class="line">  #10 = Utf8               LineNumberTable</span><br><span class="line">  #11 = Utf8               LocalVariableTable</span><br><span class="line">  #12 = Utf8               this</span><br><span class="line">  #13 = Utf8               Lcom/atguigu/java/PCRegisterTest;</span><br><span class="line">  #14 = Utf8               main</span><br><span class="line">  #15 = Utf8               ([Ljava/lang/String;)V</span><br><span class="line">  #16 = Utf8               args</span><br><span class="line">  #17 = Utf8               [Ljava/lang/String;</span><br><span class="line">  #18 = Utf8               i</span><br><span class="line">  #19 = Utf8               I</span><br><span class="line">  #20 = Utf8               j</span><br><span class="line">  #21 = Utf8               k</span><br><span class="line">  #22 = Utf8               s</span><br><span class="line">  #23 = Utf8               Ljava/lang/String;</span><br><span class="line">  #24 = Utf8               SourceFile</span><br><span class="line">  #25 = Utf8               PCRegisterTest.java</span><br><span class="line">  #26 = NameAndType        #7:#8          // &quot;&lt;init&gt;&quot;:()V</span><br><span class="line">  #27 = Utf8               abc</span><br><span class="line">  #28 = Class              #34            // java/lang/System</span><br><span class="line">  #29 = NameAndType        #35:#36        // out:Ljava/io/PrintStream;</span><br><span class="line">  #30 = Class              #37            // java/io/PrintStream</span><br><span class="line">  #31 = NameAndType        #38:#39        // println:(I)V</span><br><span class="line">  #32 = Utf8               com/atguigu/java/PCRegisterTest</span><br><span class="line">  #33 = Utf8               java/lang/Object</span><br><span class="line">  #34 = Utf8               java/lang/System</span><br><span class="line">  #35 = Utf8               out</span><br><span class="line">  #36 = Utf8               Ljava/io/PrintStream;</span><br><span class="line">  #37 = Utf8               java/io/PrintStream</span><br><span class="line">  #38 = Utf8               println</span><br><span class="line">  #39 = Utf8               (I)V</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">public</span> com.atguigu.java.PCRegisterTest();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    flags: ACC_PUBLIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">1</span>, locals=<span class="number">1</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: aload_0</span><br><span class="line">         1: invokespecial #1                  // Method java/lang/Object.&quot;&lt;init&gt;&quot;:()V</span><br><span class="line">         <span class="number">4</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">7</span>: <span class="number">0</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>       <span class="number">5</span>     <span class="number">0</span>  <span class="keyword">this</span>   Lcom/atguigu/java/PCRegisterTest;</span><br><span class="line"></span><br><span class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(java.lang.String[])</span></span>;</span><br><span class="line">    descriptor: ([Ljava/lang/String;)V</span><br><span class="line">    flags: ACC_PUBLIC, ACC_STATIC</span><br><span class="line">    Code:</span><br><span class="line">      stack=<span class="number">2</span>, locals=<span class="number">5</span>, args_size=<span class="number">1</span></span><br><span class="line">         <span class="number">0</span>: bipush        <span class="number">10</span></span><br><span class="line">         <span class="number">2</span>: istore_1</span><br><span class="line">         <span class="number">3</span>: bipush        <span class="number">20</span></span><br><span class="line">         <span class="number">5</span>: istore_2</span><br><span class="line">         <span class="number">6</span>: iload_1</span><br><span class="line">         <span class="number">7</span>: iload_2</span><br><span class="line">         <span class="number">8</span>: iadd</span><br><span class="line">         <span class="number">9</span>: istore_3</span><br><span class="line">        10: ldc           #2                  // String abc</span><br><span class="line">        <span class="number">12</span>: astore        <span class="number">4</span></span><br><span class="line">        14: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        <span class="number">17</span>: iload_1</span><br><span class="line">        18: invokevirtual #4                  // Method java/io/PrintStream.println:(I)V</span><br><span class="line">        21: getstatic     #3                  // Field java/lang/System.out:Ljava/io/PrintStream;</span><br><span class="line">        <span class="number">24</span>: iload_3</span><br><span class="line">        25: invokevirtual #4                  // Method java/io/PrintStream.println:(I)V</span><br><span class="line">        <span class="number">28</span>: <span class="keyword">return</span></span><br><span class="line">      LineNumberTable:</span><br><span class="line">        line <span class="number">10</span>: <span class="number">0</span></span><br><span class="line">        line <span class="number">11</span>: <span class="number">3</span></span><br><span class="line">        line <span class="number">12</span>: <span class="number">6</span></span><br><span class="line">        line <span class="number">14</span>: <span class="number">10</span></span><br><span class="line">        line <span class="number">15</span>: <span class="number">14</span></span><br><span class="line">        line <span class="number">16</span>: <span class="number">21</span></span><br><span class="line">        line <span class="number">18</span>: <span class="number">28</span></span><br><span class="line">      LocalVariableTable:</span><br><span class="line">        Start  Length  Slot  Name   Signature</span><br><span class="line">            <span class="number">0</span>      <span class="number">29</span>     <span class="number">0</span>  args   [Ljava/lang/String;</span><br><span class="line">            <span class="number">3</span>      <span class="number">26</span>     <span class="number">1</span>     i   I</span><br><span class="line">            <span class="number">6</span>      <span class="number">23</span>     <span class="number">2</span>     j   I</span><br><span class="line">           <span class="number">10</span>      <span class="number">19</span>     <span class="number">3</span>     k   I</span><br><span class="line">           <span class="number">14</span>      <span class="number">15</span>     <span class="number">4</span>     s   Ljava/lang/String;</span><br><span class="line">&#125;</span><br><span class="line">SourceFile: <span class="string">&quot;PCRegisterTest.java&quot;</span></span><br></pre></td></tr></table></figure>
+
+
+<ul>
+<li><p>左边的数字代表<strong>指令地址（指令偏移）</strong>，即 PC 寄存器中可能存储的值，</p>
+<p>执行引擎会读取 PC 寄存器中的值，操作虚拟机栈结构实现数据存取，并翻译指令为机器指令，让CPU做运算</p>
+</li>
+</ul>
+<p><img src="/2021/02/08/JVM-3-1/image-20210205210241883.png" alt="image-20210205210241883"></p>
+<h2 id="两个面试题"><a href="#两个面试题" class="headerlink" title="两个面试题"></a>两个面试题</h2><p><strong>使用PC寄存器存储字节码指令地址有什么用呢？</strong>或者问<strong>为什么使用 PC 寄存器来记录当前线程的执行地址呢？</strong></p>
+<ol>
+<li><p> 因为CPU需要不停的切换各个线程，这时候切换回来以后，就得知道接着从哪开始继续执行</p>
+</li>
+<li><p> JVM的字节码解释器就需要通过改变PC寄存器的值来明确下一条应该执行什么样的字节码指令</p>
+</li>
+</ol>
+<p><img src="/2021/02/08/JVM-3-1/image-20210205210359065.png" alt="image-20210205210359065"></p>
+<p><strong>PC寄存器为什么被设定为私有的？</strong></p>
+<ol>
+<li> 所谓的多线程在一个特定的时间段内只会执行其中某一个线程的方法，CPU会不停地做任务切换，这样必然导致经常中断或恢复，如何保证分毫无差呢？**为了能够准确地记录各个线程正在执行的当前字节码指令地址，最好的办法自然是==为每一个线程都分配一个PC寄存器==**，这样一来各个线程之间便可以进行独立计算，从而不会出现相互干扰的情况。</li>
+<li> 由于CPU时间片轮限制，众多线程在并发执行过程中，任何一个确定的时刻，一个处理器或者多核处理器中的一个内核，只会执行某个线程中的一条指令。</li>
+<li> 这样必然导致经常中断或恢复，如何保证分毫无差呢？每个线程在创建后，都会<strong>产生自己的程序计数器和栈帧</strong>，程序计数器在各个线程之间互不影响。</li>
+</ol>
+<h2 id="CPU-时间片"><a href="#CPU-时间片" class="headerlink" title="CPU 时间片"></a>CPU 时间片</h2><ol>
+<li><p> CPU时间片即CPU分配给各个程序的时间，每个线程被分配一个时间段，称作它的时间片。</p>
+</li>
+<li><p> 在宏观上：我们可以同时打开多个应用程序，每个程序并行不悖，同时运行。</p>
+</li>
+<li><p> 但在微观上：由于只有一个CPU，一次只能处理程序要求的一部分，如何处理公平，一种方法就是引入时间片，<strong>每个程序轮流执行</strong>。</p>
+</li>
+</ol>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta">文章作者: </span><span class="post-copyright-info"><a href="mailto:undefined">JH</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta">文章链接: </span><span class="post-copyright-info"><a href="https://www.gtxhjh.cn/2021/02/08/JVM-3-1/">https://www.gtxhjh.cn/2021/02/08/JVM-3-1/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta">版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来自 <a href="https://www.gtxhjh.cn" target="_blank">阿花花花deCSNotes</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/jvm/">jvm</a><a class="post-meta__tags" href="/tags/%E8%BF%90%E8%A1%8C%E6%97%B6%E6%95%B0%E6%8D%AE%E5%8C%BA/">运行时数据区</a><a class="post-meta__tags" href="/tags/%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8/">程序计数器</a></div><div class="post_share"><div class="social-share" data-image="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" data-sites="facebook,twitter,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/social-share.js/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/social-share.js/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><div class="prev-post pull-left"><a href="/2021/02/08/JVM-3-2/"><img class="prev-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="pagination-info"><div class="label">上一篇</div><div class="prev_info">第三章_2-虚拟机栈</div></div></a></div><div class="next-post pull-right"><a href="/2021/02/08/JVM-3/"><img class="next-cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="pagination-info"><div class="label">下一篇</div><div class="next_info">第3章-运行时数据区概述及线程</div></div></a></div></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span> 相关推荐</span></div><div class="relatedPosts-list"><div><a href="/2021/02/10/JVM-3-3/" title="第三章_3-本地方法栈、本地方法接口"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-10</div><div class="title">第三章_3-本地方法栈、本地方法接口</div></div></a></div><div><a href="/2021/02/08/JVM-3-2/" title="第三章_2-虚拟机栈"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-08</div><div class="title">第三章_2-虚拟机栈</div></div></a></div><div><a href="/2021/02/08/JVM-3/" title="第3章-运行时数据区概述及线程"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-08</div><div class="title">第3章-运行时数据区概述及线程</div></div></a></div><div><a href="/2021/02/08/JVM-2/" title="第2章-类加载子系统"><img class="cover" src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" alt="cover"><div class="content is-center"><div class="date"><i class="far fa-calendar-alt fa-fw"></i> 2021-02-08</div><div class="title">第2章-类加载子系统</div></div></a></div></div></div><hr/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div class="vcomment" id="vcomment"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info"><div class="card-info-avatar is-center"><img class="avatar-img" src="/img/avatar.png" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/><div class="author-info__name">JH</div><div class="author-info__description"></div></div><div class="card-info-data"><div class="card-info-data-item is-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">18</div></a></div><div class="card-info-data-item is-center"><a href="/tags/"><div class="headline">标签</div><div class="length-num">14</div></a></div><div class="card-info-data-item is-center"><a href="/categories/"><div class="headline">分类</div><div class="length-num">6</div></a></div></div><a class="button--animated" id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/jhhhh9"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons is-center"><a class="social-icon" href="https://github.com/jhhhh9" target="_blank" title="Github"><i class="fab fa-github"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn card-announcement-animation"></i><span>公告</span></div><div class="announcement_content">更新CS笔记</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E7%AC%AC%E4%B8%89%E7%AB%A0-1%EF%BC%9A%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8-PC%E5%AF%84%E5%AD%98%E5%99%A8"><span class="toc-number">1.</span> <span class="toc-text">第三章-1：程序计数器(PC寄存器)</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#PC%E5%AF%84%E5%AD%98%E5%99%A8%E4%BB%8B%E7%BB%8D"><span class="toc-number">1.1.</span> <span class="toc-text">PC寄存器介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#PC%E5%AF%84%E5%AD%98%E5%99%A8%E7%9A%84%E4%BD%9C%E7%94%A8"><span class="toc-number">1.2.</span> <span class="toc-text">PC寄存器的作用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%BE%E4%BE%8B"><span class="toc-number">1.3.</span> <span class="toc-text">举例</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%B8%A4%E4%B8%AA%E9%9D%A2%E8%AF%95%E9%A2%98"><span class="toc-number">1.4.</span> <span class="toc-text">两个面试题</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#CPU-%E6%97%B6%E9%97%B4%E7%89%87"><span class="toc-number">1.5.</span> <span class="toc-text">CPU 时间片</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2021/02/19/volatile%E4%B8%8E%E4%BC%AA%E5%85%B1%E4%BA%AB%E7%9A%84%E7%90%86%E8%A7%A3/" title="volatile与伪共享的理解"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="volatile与伪共享的理解"/></a><div class="content"><a class="title" href="/2021/02/19/volatile%E4%B8%8E%E4%BC%AA%E5%85%B1%E4%BA%AB%E7%9A%84%E7%90%86%E8%A7%A3/" title="volatile与伪共享的理解">volatile与伪共享的理解</a><time datetime="2021-02-19T05:47:46.000Z" title="发表于 2021-02-19 13:47:46">2021-02-19</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/10/JVM-3-3/" title="第三章_3-本地方法栈、本地方法接口"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="第三章_3-本地方法栈、本地方法接口"/></a><div class="content"><a class="title" href="/2021/02/10/JVM-3-3/" title="第三章_3-本地方法栈、本地方法接口">第三章_3-本地方法栈、本地方法接口</a><time datetime="2021-02-10T14:16:37.000Z" title="发表于 2021-02-10 22:16:37">2021-02-10</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/JVM-3-2/" title="第三章_2-虚拟机栈"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="第三章_2-虚拟机栈"/></a><div class="content"><a class="title" href="/2021/02/08/JVM-3-2/" title="第三章_2-虚拟机栈">第三章_2-虚拟机栈</a><time datetime="2021-02-08T15:54:42.000Z" title="发表于 2021-02-08 23:54:42">2021-02-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/JVM-3-1/" title="第三章_1-程序计数器(PC寄存器)"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="第三章_1-程序计数器(PC寄存器)"/></a><div class="content"><a class="title" href="/2021/02/08/JVM-3-1/" title="第三章_1-程序计数器(PC寄存器)">第三章_1-程序计数器(PC寄存器)</a><time datetime="2021-02-08T15:52:54.000Z" title="发表于 2021-02-08 23:52:54">2021-02-08</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2021/02/08/JVM-3/" title="第3章-运行时数据区概述及线程"><img src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/img/default.jpg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="第3章-运行时数据区概述及线程"/></a><div class="content"><a class="title" href="/2021/02/08/JVM-3/" title="第3章-运行时数据区概述及线程">第3章-运行时数据区概述及线程</a><time datetime="2021-02-08T15:50:10.000Z" title="发表于 2021-02-08 23:50:10">2021-02-08</time></div></div></div></div></div></div></main><footer id="footer" style="background: #CCFF99"><div id="footer-wrap"><div class="copyright">&copy;2021 By JH</div><div class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly</a></div><div class="footer_custom_text"><a target="_blank" rel="noopener" href="https://beian.miit.gov.cn"><img class="icp-icon" src="https://cdn.jsdelivr.net/gh/sviptzk/StaticFile_HEXO@0c02ff8/butterfly/img/icp.png"><span>浙ICP备20004337号-2</span></a></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="浅色和深色模式转换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside_config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="直达评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js"></script><script src="/js/main.js"></script><div class="js-pjax"><script>function loadValine () {
+  function initValine () {
+    let initData = {
+      el: '#vcomment',
+      appId: 'OnzLMbp9lfRgDFkeJmhYlqQI-MdYXbMMI',
+      appKey: 'hLFiA6vj8fQnQojdG3GOHsyS',
+      placeholder: '可匿名评论，但您的评论必须经人工审核通过后才会显示，并可收到相关回复邮件通知，因此邮箱为必填项',
+      avatar: 'monsterid',
+      meta: 'nick,mail,link'.split(','),
+      pageSize: '10',
+      lang: 'zh-CN',
+      recordIP: false,
+      serverURLs: '',
+      emojiCDN: '',
+      emojiMaps: "",
+      enableQQ: true,
+      path: window.location.pathname,
+    }
+
+    if (true) { 
+      initData.requiredFields= ('mail'.split(','))
+    }
+    
+    if (false) {
+      const otherData = false
+      initData = Object.assign(initData, otherData)
+    }
+    
+    const valine = new Valine(initData)
+    window.valine = new Valine({
+      el:'#vcomment',
+      master:'3B8AFE518CBEB7296252D7E7B6487BC5',
+      friends:'',
+      enableQQ: true,
+      requiredFields: requiredFields,
+      emojiMaps: {
+                "1":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/1.gif",
+                "001":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/001.png",
+                "002":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/002.png",
+                "003":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/003.png",
+                "0104":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/104.jpg",
+                "0105":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/105.jpg",
+                "0106":"https://cdn.jsdelivr.net/gh/lete114/CDN/emoji/106.gif"
+            }
+    });
+  }
+
+  if (typeof Valine === 'function') initValine() 
+  else getScript('https://cdn.jsdelivr.net/gh/HCLonely/Valine@latest/dist/Valine.min.js').then(initValine)
+}
+
+if ('Valine' === 'Valine' || !false) {
+  if (false) btf.loadComment(document.getElementById('vcomment'),loadValine)
+  else setTimeout(loadValine, 0)
+} else {
+  function loadOtherComment () {
+    loadValine()
+  }
+}</script></div><canvas class="fireworks" mobile="false"></canvas><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/fireworks.min.js"></script><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1/dist/activate-power-mode.min.js"></script><script>POWERMODE.colorful = true;
+POWERMODE.shake = true;
+POWERMODE.mobile = false;
+document.body.addEventListener('input', POWERMODE);
+</script><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script></div></body></html>
