@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://www.gtxhjh.cn/2021/01/28/BigData/bigdata/</loc>
+    
+    <lastmod>2021-02-24</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://www.gtxhjh.cn/2021/02/24/JVM-4/</loc>
     
     <lastmod>2021-02-24</lastmod>
@@ -142,13 +149,6 @@
   </url>
   
   <url>
-    <loc>https://www.gtxhjh.cn/2021/01/28/BigData/bigdata/</loc>
-    
-    <lastmod>2021-02-03</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://www.gtxhjh.cn/2021/01/27/hello-world/</loc>
     
     <lastmod>2021-01-27</lastmod>
@@ -271,6 +271,13 @@
   
   <url>
     <loc>https://www.gtxhjh.cn/tags/%E6%96%B9%E6%B3%95%E5%8C%BA/</loc>
+    <lastmod>2021-02-24</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://www.gtxhjh.cn/tags/%E6%89%A7%E8%A1%8C%E5%BC%95%E6%93%8E/</loc>
     <lastmod>2021-02-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.6</priority>
